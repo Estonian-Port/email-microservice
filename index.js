@@ -91,10 +91,9 @@ export const handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
+        "Access-Control-Allow-Origin": "*", // Esto permite que la respuesta vuelva al navegador
+        "Content-Type": "application/json"
+    },
       body: JSON.stringify({ status: "Enviado con éxito" })
     };
 
