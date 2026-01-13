@@ -16,10 +16,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Zip Lambda
-        run: zip -r function.zip index.js package.json
+        run: zip -r function.zip index.js node_modules package.json
 
       - name: Deploy to AWS Lambda
         uses: appleboy/lambda-action@v0.1.9
@@ -29,4 +32,3 @@ jobs:
           aws_region: us-east-1
           function_name: email-microservice
           zip_file: function.zip
-
