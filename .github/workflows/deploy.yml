@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Zip Lambda
-        run: zip -r function.zip index.js package.json node_modules
+        run: zip -r function.zip index.js package.json node_modules templates
 
       - name: Deploy to AWS Lambda
         uses: appleboy/lambda-action@v0.1.9
