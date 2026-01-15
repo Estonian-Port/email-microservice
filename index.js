@@ -63,7 +63,7 @@ export const handler = async (event) => {
 
     const { nombre, apellido, email, consulta } = JSON.parse(event.body || "{}");
 
-    if (!nombre || !apellido || !email || !consulta) {
+    if (!nombre || !email || !consulta) {
       return {
         statusCode: 400,
         headers: {
@@ -80,7 +80,7 @@ export const handler = async (event) => {
 
     const htmlDueno = cargarTemplate(site, "dueno", {
       nombre,
-      apellido,
+      apellido: apellido || "",
       email,
       consulta,
       sitio: origin
