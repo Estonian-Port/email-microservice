@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recibimos tu consulta – UNIQUE</title>
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      font-family: 'Work Sans', Arial, sans-serif;
+    }
+
+    table.main-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border-spacing: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .logo {
+      max-width: 130px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: 'Quicksand', Arial, sans-serif;
+      font-size: 22px;
+      color: #333333;
+      margin: 0;
+    }
+
+    .divider {
+      width: 60px;
+      height: 3px;
+      background-color: #5caad2;
+      margin: 15px auto;
+    }
+
+    .content {
+      padding: 25px 30px;
+      font-size: 15px;
+      color: #555555;
+      line-height: 22px;
+    }
+
+    .footer {
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 18px;
+      font-size: 12px;
+      color: #888888;
+    }
+
+    .social img {
+      width: 22px;
+      margin: 0 6px;
+      display: inline-block;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #121212 !important;
+      }
+      table.main-container {
+        background-color: #1e1e1e !important;
+        box-shadow: none !important;
+      }
+      h1, .content {
+        color: #e5e5e5 !important;
+      }
+      .footer {
+        background-color: #1a1a1a !important;
+        color: #aaaaaa !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <table class="main-container" role="presentation" bgcolor="#ffffff">
+    <tr>
+      <td>
+        <div class="header">
+          <img src="https://iili.io/KqONvFj.png" alt="UNIQUE" class="logo">
+          <h1>¡Gracias por tu consulta!</h1>
+          <div class="divider"></div>
+        </div>
+
+        <div class="content">
+          <p>Hola {{nombre}},</p>
+
+          <p>
+            Recibimos tu mensaje correctamente.
+            Nuestro equipo de <strong>UNIQUE</strong> se pondrá en contacto con vos a la brevedad.
+          </p>
+
+          <p>Gracias por elegirnos.</p>
+
+          <p>— Equipo UNIQUE</p>
+        </div>
+
+        <div class="footer" bgcolor="#f4f4f4">
+          <p>© UNIQUE · Todos los derechos reservados</p>
+          <div class="social">
+            <a href="https://www.facebook.com/piscinasdeacero" target="_blank">
+              <img src="https://iili.io/fS7JxoP.png" alt="Facebook">
+            </a>
+            <a href="https://unique.ar" target="_blank">
+              <img src="https://iili.io/3USIh6G.png" alt="Web">
+            </a>
+            <a href="https://www.youtube.com/channel/UCOUL4joSqVbuvLcRRh5YSsQ" target="_blank">
+              <img src="https://iili.io/fS72Iaa.png" alt="YouTube">
+            </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

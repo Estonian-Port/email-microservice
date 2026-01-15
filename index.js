@@ -1,10 +1,12 @@
 import { Resend } from "resend";
 import "dotenv/config";
+import fs from "fs";
+import path from "path";
 
 const MAPA_SITIOS = {
   "https://unique.ar": "estonianport@gmail.com",
   "https://saveureventos.com.ar": "saveureventosok@gmail.com",
-  "http://localhost:5500": "estonianport@gmail.com" // TEST
+  "http://localhost:5500": "estonianport@gmail.com" // Test
 };
 
 // Inicializar Resend
@@ -12,6 +14,24 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Remitente único (dominio verificado)
 const FROM_EMAIL = "Contacto <contacto@estonianport.com.ar>";
+
+// Cargar templates HTML
+const cargarTemplate = (site, tipo, data) => {
+  const filePath = path.join(
+    process.cwd(),
+    "templates",
+    site,
+    `${tipo}.html`
+  );
+
+  let html = fs.readFileSync(filePath, "utf8");
+
+  for (const key in data) {
+    html = html.replaceAll(`{{${key}}}`, data[key]);
+  }
+
+  return html;
+};
 
 export const handler = async (event) => {
   // Preflight CORS
@@ -28,10 +48,8 @@ export const handler = async (event) => {
   }
 
   try {
-    // Origin
     const origin = event.headers?.origin || event.headers?.Origin;
 
-    // Validar sitio
     const emailDueno = MAPA_SITIOS[origin];
     if (!emailDueno) {
       return {
@@ -43,7 +61,6 @@ export const handler = async (event) => {
       };
     }
 
-    // Body
     const { nombre, apellido, email, consulta } = JSON.parse(event.body || "{}");
 
     if (!nombre || !apellido || !email || !consulta) {
@@ -56,30 +73,35 @@ export const handler = async (event) => {
       };
     }
 
-    // Mail al dueño
+    const site =
+      origin.includes("unique.ar") ? "unique" :
+      origin.includes("saveureventos") ? "saveur" :
+      "unique";
+
+    const htmlDueno = cargarTemplate(site, "dueno", {
+      nombre,
+      apellido,
+      email,
+      consulta,
+      sitio: origin
+    });
+
     await resend.emails.send({
       from: FROM_EMAIL,
       to: emailDueno,
       subject: "Nueva consulta desde tu sitio",
-      html: `
-        <h3>Nueva consulta</h3>
-        <p><b>Nombre:</b> ${nombre} ${apellido}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Consulta:</b><br/>${consulta}</p>
-        <p><b>Sitio:</b> ${origin}</p>
-      `
+      html: htmlDueno
     });
 
-    // Mail al cliente
+    const htmlCliente = cargarTemplate(site, "cliente", {
+      nombre
+    });
+
     await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: "Recibimos tu consulta",
-      html: `
-        <p>Hola ${nombre},</p>
-        <p>Gracias por contactarnos. Respondemos a la brevedad.</p>
-        <p>— EstonianPort</p>
-      `
+      html: htmlCliente
     });
 
     console.log("Mails enviados:", {
@@ -91,9 +113,9 @@ export const handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Esto permite que la respuesta vuelva al navegador
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json"
-    },
+      },
       body: JSON.stringify({ status: "Enviado con éxito" })
     };
 
