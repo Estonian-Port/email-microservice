@@ -3,10 +3,25 @@ import "dotenv/config";
 import fs from "fs";
 import path from "path";
 
+/**
+ * Configuración por sitio
+ */
 const MAPA_SITIOS = {
-  "https://unique.ar": "estonianport@gmail.com",
-  "https://saveureventos.com.ar": "saveureventosok@gmail.com",
-  "http://localhost:5500": "estonianport@gmail.com" // Test
+  "https://unique.ar": {
+    emailDueno: "estonianport@gmail.com",
+    enviarConfirmacionCliente: false,
+    template: "unique"
+  },
+  "https://saveureventos.com.ar": {
+    emailDueno: "saveureventosok@gmail.com",
+    enviarConfirmacionCliente: true,
+    template: "saveur"
+  },
+  "http://localhost:5500": {
+    emailDueno: "estonianport@gmail.com",
+    enviarConfirmacionCliente: true,
+    template: "unique"
+  }
 };
 
 // Inicializar Resend
@@ -15,7 +30,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Remitente único (dominio verificado)
 const FROM_EMAIL = "Contacto <contacto@estonianport.com.ar>";
 
-// Cargar templates HTML
+/**
+ * Cargar templates HTML
+ */
 const cargarTemplate = (site, tipo, data) => {
   const filePath = path.join(
     process.cwd(),
@@ -50,8 +67,9 @@ export const handler = async (event) => {
   try {
     const origin = event.headers?.origin || event.headers?.Origin;
 
-    const emailDueno = MAPA_SITIOS[origin];
-    if (!emailDueno) {
+    const siteConfig = MAPA_SITIOS[origin];
+
+    if (!siteConfig) {
       return {
         statusCode: 403,
         headers: {
@@ -60,6 +78,12 @@ export const handler = async (event) => {
         body: JSON.stringify({ error: "Sitio no autorizado" })
       };
     }
+
+    const {
+      emailDueno,
+      enviarConfirmacionCliente,
+      template
+    } = siteConfig;
 
     const { nombre, apellido, email, consulta } = JSON.parse(event.body || "{}");
 
@@ -73,12 +97,10 @@ export const handler = async (event) => {
       };
     }
 
-    const site =
-      origin.includes("unique.ar") ? "unique" :
-      origin.includes("saveureventos") ? "saveur" :
-      "unique";
-
-    const htmlDueno = cargarTemplate(site, "dueno", {
+    /**
+     * Mail al dueño
+     */
+    const htmlDueno = cargarTemplate(template, "dueno", {
       nombre,
       apellido: apellido || "",
       email,
@@ -93,21 +115,26 @@ export const handler = async (event) => {
       html: htmlDueno
     });
 
-    const htmlCliente = cargarTemplate(site, "cliente", {
-      nombre
-    });
+    /**
+     * Mail al cliente (condicional)
+     */
+    if (enviarConfirmacionCliente) {
+      const htmlCliente = cargarTemplate(template, "cliente", {
+        nombre
+      });
 
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to: email,
-      subject: "Recibimos tu consulta",
-      html: htmlCliente
-    });
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        subject: "Recibimos tu consulta",
+        html: htmlCliente
+      });
+    }
 
     console.log("Mails enviados:", {
       origin,
       emailDueno,
-      emailCliente: email
+      emailCliente: enviarConfirmacionCliente ? email : "NO ENVIADO"
     });
 
     return {
