@@ -85,9 +85,15 @@ export const handler = async (event) => {
       template
     } = siteConfig;
 
-    const { nombre, apellido, email, consulta } = JSON.parse(event.body || "{}");
+    const {
+      nombre,
+      apellido,
+      email,
+      telefono,
+      consulta
+    } = JSON.parse(event.body || "{}");
 
-    if (!nombre || !email || !consulta) {
+    if (!nombre || !email || !telefono || !consulta) {
       return {
         statusCode: 400,
         headers: {
@@ -104,6 +110,7 @@ export const handler = async (event) => {
       nombre,
       apellido: apellido || "",
       email,
+      telefono,
       consulta,
       sitio: origin
     });
