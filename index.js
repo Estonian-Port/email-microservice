@@ -8,7 +8,7 @@ import path from "path";
  */
 const MAPA_SITIOS = {
   "https://unique.ar": {
-    emailDueno: "estonianport@gmail.com",
+    emailDueno: "info@unique.ar",
     enviarConfirmacionCliente: false,
     template: "unique"
   },
